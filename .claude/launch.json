@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "musical-bingo",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 3000
+    },
+    {
+      "name": "musical-bingo-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    }
+  ]
+}

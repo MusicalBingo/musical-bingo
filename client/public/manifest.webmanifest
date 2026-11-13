@@ -1,0 +1,9 @@
+{
+  "name": "Musical Bingo",
+  "short_name": "Music Bingo",
+  "start_url": "/play",
+  "display": "standalone",
+  "background_color": "#140f2e",
+  "theme_color": "#140f2e",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
