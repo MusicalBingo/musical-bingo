@@ -3,6 +3,8 @@ import type { GameSummary, Quiz, QuizSummary } from '../../../shared/types.ts';
 import { AuthError, api, download, go } from './api.ts';
 import { newQuizTemplate } from './templates.ts';
 
+const XLSX_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 const PHASE_LABEL: Record<string, string> = {
   lobby: 'Waiting for players',
   number: 'Number drawn',
@@ -61,16 +63,44 @@ export function Home({ onAuthError }: { onAuthError: () => void }) {
       await load();
     });
 
-  const exportQuiz = (q: QuizSummary) =>
+  const fileBase = (title: string) => title.replace(/[^\p{L}\p{N}\- ]+/gu, '').trim() || 'quiz';
+
+  const exportQuiz = (q: QuizSummary, format: 'json' | 'xlsx') =>
     guard(async () => {
       const full = await api<Quiz>(`/api/quizzes/${q.id}`);
-      download(`${q.title.replace(/[^\w\- ]+/g, '').trim() || 'quiz'}.musicalbingo.json`, JSON.stringify(full, null, 2));
+      if (format === 'json') return download(`${fileBase(q.title)}.musicalbingo.json`, JSON.stringify(full, null, 2));
+      const { quizToXlsx } = await import('../../../shared/quizSheet.ts');
+      download(`${fileBase(q.title)}.xlsx`, quizToXlsx(full), XLSX_TYPE);
+    });
+
+  const downloadTemplate = () =>
+    guard(async () => {
+      const { templateXlsx } = await import('../../../shared/quizSheet.ts');
+      download('Musical Bingo quiz template.xlsx', templateXlsx(), XLSX_TYPE);
     });
 
   const importQuiz = (file: File) =>
     guard(async () => {
-      const data = JSON.parse(await file.text());
-      const q = await api<Quiz>('/api/quizzes', { method: 'POST', body: { ...data, id: '' } });
+      if (file.size > 20 * 1024 * 1024) throw new Error('That file is too big for a quiz (over 20 MB).');
+      let data: unknown;
+      let warnings: string[] = [];
+      if (/\.json$/i.test(file.name)) {
+        try {
+          data = JSON.parse(await file.text());
+        } catch {
+          throw new Error('That JSON file could not be read.');
+        }
+      } else {
+        const { xlsxToQuiz } = await import('../../../shared/quizSheet.ts');
+        const r = xlsxToQuiz(new Uint8Array(await file.arrayBuffer()), file.name);
+        data = r.quiz;
+        warnings = r.warnings;
+      }
+      const q = await api<Quiz>('/api/quizzes', { method: 'POST', body: { ...(data as object), id: '' } });
+      if (warnings.length) {
+        const more = warnings.length > 12 ? `\n…and ${warnings.length - 12} more.` : '';
+        alert(`Imported "${q.title}" with ${q.questions.length} questions. Please check:\n\n• ${warnings.slice(0, 12).join('\n• ')}${more}`);
+      }
       go(`/quiz/${q.id}`);
     });
 
@@ -137,13 +167,16 @@ export function Home({ onAuthError }: { onAuthError: () => void }) {
         <div className="row" style={{ justifyContent: 'space-between' }}>
           <h2>Quizzes</h2>
           <div className="row">
-            <button className="btn" onClick={() => fileRef.current?.click()}>
+            <button className="btn" onClick={downloadTemplate} title="An Excel file with example questions to fill in">
+              ⬇ Excel template
+            </button>
+            <button className="btn" onClick={() => fileRef.current?.click()} title="Excel (.xlsx) or a .json backup">
               ⬆ Import
             </button>
             <input
               ref={fileRef}
               type="file"
-              accept=".json,application/json"
+              accept=".xlsx,.json,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               hidden
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -184,8 +217,11 @@ export function Home({ onAuthError }: { onAuthError: () => void }) {
                 <button className="btn small" onClick={() => duplicate(q.id)}>
                   Duplicate
                 </button>
-                <button className="btn small" onClick={() => exportQuiz(q)}>
-                  Export
+                <button className="btn small" onClick={() => exportQuiz(q, 'xlsx')} title="Download as an Excel file you can edit and import again">
+                  ⬇ Excel
+                </button>
+                <button className="btn small" onClick={() => exportQuiz(q, 'json')} title="Download a full backup (.json)">
+                  ⬇ Backup
                 </button>
                 <button className="btn small danger" onClick={() => remove(q)}>
                   Delete

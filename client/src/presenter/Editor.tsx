@@ -28,7 +28,7 @@ export function questionProblems(q: Question): string[] {
   if (q.media.source === 'youtube' && !parseYouTube(q.media.url)) p.push('YouTube link missing or not valid');
   if (q.media.source === 'audio' && !q.media.url) p.push('Audio file missing');
   if (q.image && !q.image.url) p.push('Picture missing');
-  if (q.kind === 'band' && !q.image) p.push('Band questions usually need a picture');
+  if (q.kind === 'band' && !q.image && q.media.source === 'none') p.push('Band questions need a picture or a music clip');
   return p;
 }
 

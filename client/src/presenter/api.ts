@@ -29,8 +29,8 @@ export async function uploadFile(file: File): Promise<string> {
   return data.url as string;
 }
 
-export function download(filename: string, text: string, type = 'application/json') {
-  const blob = new Blob([text], { type });
+export function download(filename: string, content: string | Uint8Array, type = 'application/json') {
+  const blob = new Blob([typeof content === 'string' ? content : new Uint8Array(content)], { type });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = filename;

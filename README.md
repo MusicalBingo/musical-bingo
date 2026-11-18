@@ -38,7 +38,41 @@ Everything you need to run a Musical Bingo night: regular bingo on paper cards, 
 
 **Quiz settings**: default time and points, the **bonus for the first correct answer**, 75 or 90 bingo numbers, group score as **sum** or **average per member**, whether phones show the answer texts, and whether to reveal the answer automatically.
 
-Save with the button or **Ctrl+S**. Use **Export / Import** to back up quizzes or move them to another computer.
+Save with the button or **Ctrl+S**.
+
+### Preparing a quiz in Excel
+
+You can also write the questions in Excel (or Google Sheets, LibreOffice, Numbers) and import them:
+
+1. **Presenter → ⬇ Excel template** downloads a file with three example questions.
+2. Fill in one row per question on the **Questions** sheet: type, question, 2–4 answers, the number of the right answer (1–4), a YouTube link or audio file link with start (`m:ss`) and play seconds, and optionally a picture link, seconds to answer and points. The **Settings** sheet holds the quiz title and options; the **Help** sheet explains every column.
+3. **Presenter → ⬆ Import** and choose the file. The quiz opens in the editor. If some rows need attention (no right answer, too few answers, a link that isn't one), you get a list of them.
+
+Columns can be in any order, and the importer understands other names too (`Option A`, `Right answer`, `Link`…). For the right answer you can also write A–D, the colour or shape (`purple`), or the answer text. Audio files and pictures on your own computer can't go in a spreadsheet: upload them in the editor after importing.
+
+### Importing a song list
+
+**⬆ Import** also takes a song list or run sheet: one row per song with its **title**, **artist**, a **question** and a **YouTube link**, for example:
+
+| # | Title | Artist | … | Question | Link |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Can't Stop the Feeling | Justin Timberlake | | Name of Artist | https://youtu.be/… |
+| 2 | Treasure | Bruno Mars | | Name of Song | https://youtu.be/… |
+| 4 | Everybody | Backstreet Boys | | Name of Band | https://youtu.be/… |
+
+No header row is needed: the importer finds the question column (the one that keeps saying "Name of Song", "Name of Band"…), the link column, and takes the first two text columns as title and artist. Other columns (BPM, mood, notes) are ignored.
+
+- **Name of Song** → "What is this song?", the right answer is the title.
+- **Name of Artist / Singer** → "Who is singing?", **Name of Band** → "Which band is this?", the right answer is the artist.
+- The **3 wrong answers** are picked from other songs in the same list: other titles for song questions, other bands for band questions. The same file always gives the same answers. Check them in the editor.
+- Questions the list can't answer ("What movie", "What year", "Composer") are imported with empty answers for you to fill in.
+- Rows without a question (karaoke, super games, pauses) are skipped. After importing you get a list of everything that was skipped or needs checking.
+
+### Export and backups
+
+Each quiz has two download buttons:
+- **⬇ Excel**: the same layout as the template. Edit it in Excel and import it again (it becomes a new quiz).
+- **⬇ Backup**: a `.json` file with everything, for backups or moving quizzes to another computer or to the cloud server. **⬆ Import** takes both kinds of file.
 
 ## Running the game
 
@@ -93,6 +127,7 @@ Everything is in the `data` folder: `quizzes/` (your quizzes), `uploads/` (pictu
 ```bash
 npm run bots -- 12345 15            # 15 fake players join game 12345 and answer at random
 npm test -- http://localhost:3000   # end-to-end check of joining, scoring, groups, cards
+npm run test:sheets                 # checks Excel import and export (no server needed)
 ```
 
 For development with live reload: `npm run dev`, then open http://localhost:5173.
