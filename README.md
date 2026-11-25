@@ -96,6 +96,8 @@ The control panel also lets you:
 
 Players who lose their connection or lock their phone come back automatically, with the same name and points.
 
+Phones **stay on** while the player page is open, so they don't lock between questions; they can sleep again once the game is over. On the cloud server (HTTPS) this uses the browser's screen wake lock. On the venue laptop (plain `http://`) browsers don't offer that, so a tiny silent video plays in a loop instead, starting from the player's first tap. If a phone dims anyway (some battery-saver modes override it), players can tap the screen.
+
 ## Printing bingo cards
 
 **Presenter → Print bingo cards**: choose a series letter, how many cards, and 1–6 cards per A4 page, then print. Each card has a number like `A-001`. The server can rebuild any card from its number, so you can **check cards during the game without storing anything**. Reuse the same series every night, or pick a new letter for a fresh set. (Card checking works with 75-ball cards.)

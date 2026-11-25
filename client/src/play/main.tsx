@@ -6,6 +6,7 @@ import { ANSWER_STYLES, KIND_LABELS, type PlayerYou, type PublicState } from '..
 import { bingoLetter } from '../../../shared/util.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { emit, getSocket, serverNow, storage, store, useConnection, useGameState, useTicker } from '../common/net.ts';
+import { keepAwakeStatus, setKeepAwake } from '../common/keepAwake.ts';
 
 interface Session {
   code: string;
@@ -63,6 +64,10 @@ function App() {
       s.off('gameClosed', closed);
     };
   }, []);
+
+  // Keep the screen on until the game is over, closed or the player removed (also on the join screen: the first tap there starts it).
+  const ended = msg?.state.phase === 'ended' || (!session && /closed|removed/i.test(notice));
+  useEffect(() => setKeepAwake(!ended), [ended]);
 
   if (!session)
     return (
@@ -438,4 +443,5 @@ function FinalView({ state, you, groupRank }: { state: PublicState; you: PlayerY
   );
 }
 
+(window as any).mbKeepAwake = keepAwakeStatus; // lets you check it from the browser console
 createRoot(document.getElementById('root')!).render(<App />);
