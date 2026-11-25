@@ -132,7 +132,8 @@ export function quizToXlsx(quiz: Pick<Quiz, 'title' | 'description' | 'settings'
     ['Default seconds to answer', s.defaultTime, 'Used when a question leaves "Seconds to answer" empty'],
     ['Default points', s.defaultPoints, 'Used when a question leaves "Points" empty'],
     ['Bonus for first correct answer', s.firstBonus, ''],
-    ['Bingo numbers', s.bingoMax, '75 or 90'],
+    ['Bingo numbers', s.bingoMax, 'Highest number, 10 to 99 (75 = B-I-N-G-O cards). Can also be changed during the game.'],
+    ['Play as', s.playAs, 'individual, or groups (tables play together). Can also be changed during the game.'],
     ['Group score', s.groupScoring, 'sum, or average (per member)'],
     ['Show answers on phones', s.answersOnPhones ? 'yes' : 'no', 'no = phones show only the coloured shapes'],
     ['Reveal automatically', s.autoReveal ? 'yes' : 'no', 'when time is up or everyone has answered'],
@@ -229,7 +230,8 @@ function readSettings(sheet: SheetData | undefined): { title: string; descriptio
     else if (/bonus|first/.test(key)) Number.isFinite(n) && (s.firstBonus = n);
     else if (/second|time/.test(key) && !/reveal/.test(key)) Number.isFinite(n) && (s.defaultTime = n);
     else if (/point/.test(key)) Number.isFinite(n) && (s.defaultPoints = n);
-    else if (/bingo|number|ball/.test(key)) s.bingoMax = n === 90 ? 90 : 75;
+    else if (/bingo|number|ball/.test(key)) Number.isFinite(n) && (s.bingoMax = n);
+    else if (/^play|team|individ/.test(key)) s.playAs = /ind|solo|single|own|alone/i.test(clean(v)) ? 'individual' : 'groups';
     else if (/group/.test(key)) s.groupScoring = /av/i.test(clean(v)) ? 'average' : 'sum';
     else if (/phone/.test(key)) s.answersOnPhones = yes(v);
     else if (/reveal|auto/.test(key)) s.autoReveal = yes(v);

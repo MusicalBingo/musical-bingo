@@ -11,6 +11,7 @@ import type {
   Quiz,
   RevealInfo,
 } from '../shared/types.ts';
+import { BINGO_LIMIT, BINGO_MIN, DEFAULT_SETTINGS } from '../shared/types.ts';
 
 interface Player {
   id: string;
@@ -142,7 +143,20 @@ export class Game {
     return ok;
   }
 
+  private get individual() {
+    return this.quiz.settings.playAs === 'individual';
+  }
+
+  /** Individual game or groups, for this game only. Groups and their points are kept, just hidden, in an individual game. */
+  setPlayAs(value: unknown): Result {
+    if (value !== 'individual' && value !== 'groups') return { ok: false, error: 'Choose individual or groups.' };
+    this.quiz.settings = { ...this.quiz.settings, playAs: value };
+    this.changed();
+    return { ok: true };
+  }
+
   createGroup(playerId: string, nameIn: unknown): Result {
+    if (this.individual) return { ok: false, error: 'This game is played individually.' };
     const p = this.players.get(playerId);
     if (!p) return { ok: false, error: 'Unknown player.' };
     const name = cleanName(nameIn);
@@ -159,6 +173,7 @@ export class Game {
   }
 
   joinGroup(playerId: string, groupId: string | null): Result {
+    if (this.individual) return { ok: false, error: 'This game is played individually.' };
     const p = this.players.get(playerId);
     if (!p) return { ok: false, error: 'Unknown player.' };
     if (groupId && !this.groups.has(groupId)) return { ok: false, error: 'That group no longer exists.' };
@@ -195,6 +210,18 @@ export class Game {
     this.phase = 'number';
     this.changed();
     return { ok: true, number: n };
+  }
+
+  /** Change the highest number for this game (custom cards, shorter or longer games). The quiz itself keeps its own setting. */
+  setBingoMax(value: number): Result {
+    const n = Math.round(Number(value));
+    if (!(n >= BINGO_MIN && n <= BINGO_LIMIT)) return { ok: false, error: `The highest number must be between ${BINGO_MIN} and ${BINGO_LIMIT}.` };
+    const over = this.drawn.filter((d) => d > n);
+    if (over.length)
+      return { ok: false, error: `${over.join(', ')} ${over.length > 1 ? 'have' : 'has'} already been called. Undo ${over.length > 1 ? 'them' : 'it'} or start a new round first.` };
+    this.quiz.settings = { ...this.quiz.settings, bingoMax: n };
+    this.changed();
+    return { ok: true };
   }
 
   undoDraw(): Result {
@@ -451,6 +478,8 @@ export class Game {
 
   publicState(): PublicState {
     const showQuestion = this.phase === 'question' || this.phase === 'reveal';
+    const reveal = showQuestion ? (this.current?.reveal ?? null) : null;
+    const solo = this.individual; // hide groups everywhere in an individual game
     return {
       code: this.code,
       title: this.quiz.title,
@@ -462,10 +491,10 @@ export class Game {
       questionCount: this.quiz.questions.length,
       questionIndex: this.questionIndex,
       question: showQuestion ? this.liveQuestion() : null,
-      reveal: showQuestion ? (this.current?.reveal ?? null) : null,
+      reveal: solo && reveal?.firstCorrect ? { ...reveal, firstCorrect: { ...reveal.firstCorrect, groupName: null } } : reveal,
       answeredCount: this.current?.answers.size ?? 0,
-      players: this.playerRows(),
-      groups: this.groupRows(),
+      players: solo ? this.playerRows().map((p) => ({ ...p, groupId: null })) : this.playerRows(),
+      groups: solo ? [] : this.groupRows(),
       announcement: this.announcement,
       mediaNonce: this.mediaNonce,
       mediaStopped: this.mediaStopped,
@@ -480,7 +509,7 @@ export class Game {
     return {
       id: p.id,
       name: p.name,
-      groupId: p.groupId,
+      groupId: this.individual ? null : p.groupId,
       score: p.score,
       rank: rows.findIndex((r) => r.id === p.id) + 1,
       answer: showQuestion ? (c?.answers.get(p.id)?.choice ?? null) : null,
@@ -528,7 +557,8 @@ export class Game {
   }
 
   static fromJSON(data: any, onChange: (g: Game) => void): Game {
-    const g = new Game(data.code, data.quiz, onChange);
+    // games saved by an older version may miss newer settings
+    const g = new Game(data.code, { ...data.quiz, settings: { ...DEFAULT_SETTINGS, ...data.quiz.settings } }, onChange);
     g.createdAt = data.createdAt;
     g.phase = data.phase;
     for (const p of data.players) g.players.set(p.id, { ...p, sockets: new Set() });

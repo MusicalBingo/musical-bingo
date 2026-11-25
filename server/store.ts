@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { nanoid } from 'nanoid';
 import {
+  BINGO_LIMIT,
+  BINGO_MIN,
   DEFAULT_SETTINGS,
   type Question,
   type Quiz,
@@ -83,7 +85,8 @@ export function normalizeSettings(s: any): QuizSettings {
     defaultTime: clamp(Math.round(num(s.defaultTime, DEFAULT_SETTINGS.defaultTime)), 5, 300),
     defaultPoints: clamp(Math.round(num(s.defaultPoints, DEFAULT_SETTINGS.defaultPoints)), 0, 100000),
     firstBonus: clamp(Math.round(num(s.firstBonus, DEFAULT_SETTINGS.firstBonus)), 0, 100000),
-    bingoMax: Number(s.bingoMax) === 90 ? 90 : 75,
+    bingoMax: clamp(Math.round(num(s.bingoMax, DEFAULT_SETTINGS.bingoMax)), BINGO_MIN, BINGO_LIMIT),
+    playAs: s.playAs === 'individual' ? 'individual' : 'groups',
     groupScoring: s.groupScoring === 'average' ? 'average' : 'sum',
     answersOnPhones: s.answersOnPhones !== false,
     autoReveal: s.autoReveal !== false,

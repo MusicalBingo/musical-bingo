@@ -156,7 +156,11 @@ function Lobby({ state, joinUrl }: { state: PublicState; joinUrl: string }) {
         <p className="join-code">
           Game code <strong>{state.code}</strong>
         </p>
-        <p className="muted">Scan with your phone camera, enter your name, then join or create a group for your table.</p>
+        <p className="muted">
+          {state.settings.playAs === 'groups'
+            ? 'Scan with your phone camera, enter your name, then join or create the group for your table.'
+            : 'Scan with your phone camera and enter your name.'}
+        </p>
       </div>
       <div className="lobby-people">
         <h2>
@@ -200,8 +204,10 @@ function NumberDraw({ state }: { state: PublicState }) {
 
 function Board({ state }: { state: PublicState }) {
   const max = state.settings.bingoMax;
+  const cols = max > 60 ? 15 : 10;
+  // keep the cells the same size whatever the number of columns
   return (
-    <div className={`big-board board-${max}`}>
+    <div className="big-board" style={max === 75 ? undefined : { width: `min(100%, ${cols * 8}vh)` }}>
       {max === 75 &&
         'BINGO'.split('').map((l, r) => (
           <div key={l} className="board-row">
@@ -213,9 +219,9 @@ function Board({ state }: { state: PublicState }) {
             ))}
           </div>
         ))}
-      {max === 90 && (
-        <div className="board-90-grid">
-          {Array.from({ length: 90 }, (_, i) => i + 1).map((v) => (
+      {max !== 75 && (
+        <div className="board-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+          {Array.from({ length: max }, (_, i) => i + 1).map((v) => (
             <span key={v} className={`bcell ${state.drawn.includes(v) ? 'on' : ''} ${v === state.lastNumber ? 'last' : ''}`}>
               {v}
             </span>
@@ -363,7 +369,7 @@ function Leaderboard({ state }: { state: PublicState }) {
           </ol>
         </div>
         {state.groups.length > 0 && (
-          <div className="lb-col">
+          <div className="lb-col" style={{ order: -1 }}>
             <h2>Groups{state.settings.groupScoring === 'average' ? ' (average per member)' : ''}</h2>
             <ol>
               {state.groups.slice(0, 10).map((g, i) => (
@@ -384,7 +390,10 @@ function Leaderboard({ state }: { state: PublicState }) {
 }
 
 function Final({ state }: { state: PublicState }) {
-  const top = state.players.slice(0, 3);
+  // a group game puts the groups on the podium and lists the best players below; an individual game the other way round
+  const byGroup = state.groups.length > 0;
+  const top = (byGroup ? state.groups : state.players).slice(0, 3).map((x) => ({ id: x.id, name: x.name, score: x.score }));
+  const others = (byGroup ? state.players : []).slice(0, 3);
   const order = [1, 0, 2].filter((i) => top[i]);
   return (
     <div className="final">
@@ -392,18 +401,18 @@ function Final({ state }: { state: PublicState }) {
       <div className="podium">
         {order.map((i) => (
           <div key={top[i].id} className={`podium-step p${i + 1}`}>
-            <span className="podium-name">{top[i].name}</span>
+            <span className="podium-name">{byGroup ? `👥 ${top[i].name}` : top[i].name}</span>
             <span className="podium-score">{top[i].score} pts</span>
             <div className="podium-block">{['🥇', '🥈', '🥉'][i]}</div>
           </div>
         ))}
       </div>
-      {state.groups.length > 0 && (
+      {others.length > 0 && (
         <div className="final-groups">
-          <h2>Best groups</h2>
-          {state.groups.slice(0, 3).map((g, i) => (
-            <div key={g.id} className="final-group">
-              {['🥇', '🥈', '🥉'][i]} <strong>{g.name}</strong> · {g.score} pts
+          <h2>Best players</h2>
+          {others.map((p, i) => (
+            <div key={p.id} className="final-group">
+              {['🥇', '🥈', '🥉'][i]} <strong>{p.name}</strong> · {p.score} pts
             </div>
           ))}
         </div>

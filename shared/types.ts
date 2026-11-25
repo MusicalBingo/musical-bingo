@@ -39,13 +39,19 @@ export interface Question {
   image: QuestionImage | null;
 }
 
+/** smallest and largest "highest bingo number" a game can use */
+export const BINGO_MIN = 10;
+export const BINGO_LIMIT = 99;
+
 export interface QuizSettings {
   defaultTime: number;
   defaultPoints: number;
   /** extra points for the first player who answers correctly */
   firstBonus: number;
-  /** bingo balls: 1..75 (US) or 1..90 (UK) */
-  bingoMax: 75 | 90;
+  /** highest bingo ball: 75 = B-I-N-G-O cards, 90 = UK cards, or anything in between for custom cards */
+  bingoMax: number;
+  /** everyone for themselves, or tables play as groups */
+  playAs: 'individual' | 'groups';
   /** group score = sum of members' points, or the average per member */
   groupScoring: 'sum' | 'average';
   /** show answer texts on the phones as well as on the big screen */
@@ -77,6 +83,7 @@ export const DEFAULT_SETTINGS: QuizSettings = {
   defaultPoints: 100,
   firstBonus: 50,
   bingoMax: 75,
+  playAs: 'groups',
   groupScoring: 'sum',
   answersOnPhones: true,
   autoReveal: true,

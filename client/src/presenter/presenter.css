@@ -415,8 +415,14 @@ legend {
 .board-75 {
   grid-template-columns: repeat(15, 1fr);
 }
-.board-90 {
+.board-10 {
   grid-template-columns: repeat(10, 1fr);
+}
+.max-input {
+  width: 72px;
+  padding: 4px 8px;
+  text-align: center;
+  font-weight: 700;
 }
 .board .cell {
   aspect-ratio: 1;

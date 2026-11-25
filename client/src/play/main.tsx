@@ -149,6 +149,7 @@ function JoinScreen({ initialCode, notice, onJoined }: { initialCode: string; no
 }
 
 function GameScreen({ state, you, onLeave }: { state: PublicState; you: PlayerYou; onLeave: () => void }) {
+  const groupsOn = state.settings.playAs === 'groups';
   const myGroup = state.groups.find((g) => g.id === you.groupId) ?? null;
   const groupRank = myGroup ? state.groups.findIndex((g) => g.id === myGroup.id) + 1 : 0;
   const q = state.question;
@@ -187,7 +188,7 @@ function GameScreen({ state, you, onLeave }: { state: PublicState; you: PlayerYo
               <i />
               <i />
             </div>
-            <p>You're in! Join a group or play on your own, and watch the big screen.</p>
+            <p>{groupsOn ? "You're in! Join your table's group below, then watch the big screen." : "You're in! Watch the big screen, the game starts soon."}</p>
           </div>
         )}
         {state.phase === 'leaderboard' && (
@@ -202,7 +203,7 @@ function GameScreen({ state, you, onLeave }: { state: PublicState; you: PlayerYo
             )}
           </div>
         )}
-        <GroupBox state={state} you={you} />
+        {groupsOn && <GroupBox state={state} you={you} />}
       </>
     );
 
@@ -211,7 +212,7 @@ function GameScreen({ state, you, onLeave }: { state: PublicState; you: PlayerYo
       <header className="me">
         <div className="me-name">
           <strong>{you.name}</strong>
-          <span className="muted small">{myGroup ? `👥 ${myGroup.name}` : 'Solo'}</span>
+          {groupsOn && <span className="muted small">{myGroup ? `👥 ${myGroup.name}` : 'No group yet'}</span>}
         </div>
         <div className="me-score">
           <strong>{you.score}</strong>
@@ -272,8 +273,8 @@ function GroupBox({ state, you }: { state: PublicState; you: PlayerYou }) {
 
   return (
     <div className="group-box">
-      <strong>Play with friends</strong>
-      <p className="muted small">Create a group for your table, or tap a group your friends already made.</p>
+      <strong>Your group</strong>
+      <p className="muted small">Tap your table's group, or create it if you're the first one there.</p>
       <form onSubmit={create} className="row nowrap">
         <input value={name} onChange={(e) => setName(e.target.value.slice(0, 24))} placeholder="New group name" maxLength={24} />
         <button className="btn primary" disabled={!name.trim()}>
@@ -292,11 +293,6 @@ function GroupBox({ state, you }: { state: PublicState; you: PlayerYou }) {
         </div>
       )}
       <div className="row">
-        {you.groupId && (
-          <button className="btn small" onClick={() => join(null)}>
-            Play solo
-          </button>
-        )}
         {mine && (
           <button className="btn small" onClick={() => setOpen(false)}>
             Cancel

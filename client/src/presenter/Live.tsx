@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ANSWER_STYLES, KIND_LABELS } from '../../../shared/types.ts';
+import { ANSWER_STYLES, BINGO_LIMIT, BINGO_MIN, KIND_LABELS } from '../../../shared/types.ts';
 import { bingoLetter } from '../../../shared/util.ts';
 import type { CardCheck } from '../../../shared/bingo.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
@@ -50,6 +50,7 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
   const [card, setCard] = useState<CardCheck | null>(null);
   const [cardErr, setCardErr] = useState('');
   const [mode, setModeState] = useState<DrawMode>(savedMode);
+  const [maxDraft, setMaxDraft] = useState('');
   const callInput = useRef<HTMLInputElement>(null);
 
   const setMode = (m: DrawMode) => {
@@ -85,6 +86,10 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
   useEffect(() => {
     setNextIndex(null);
   }, [state?.questionIndex]);
+
+  useEffect(() => {
+    if (state) setMaxDraft(String(state.settings.bingoMax));
+  }, [state?.settings.bingoMax]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -137,6 +142,11 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
 
   const max = state.settings.bingoMax;
   const ballName = (n: number) => `${bingoLetter(n, max)}${n}`;
+  const applyMax = async () => {
+    if (Number(maxDraft) === max) return;
+    const r = await act('bingoMax', { max: Number(maxDraft) });
+    if (!r.ok) setMaxDraft(String(max));
+  };
   const callBall = async (raw: string) => {
     const n = parseBall(raw, max);
     if (typeof n === 'string') return setErr(n);
@@ -364,7 +374,9 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
         {/* ---------- bingo ---------- */}
         <section className="panel bingo-panel">
           <div className="row" style={{ justifyContent: 'space-between' }}>
-            <h3>Bingo · {state.drawn.length} drawn</h3>
+            <h3>
+              Bingo · {state.drawn.length} drawn <span className="muted small">· {max - state.drawn.length} left</span>
+            </h3>
             {state.lastNumber != null && (
               <span className="ball" style={{ width: 56, height: 56, fontSize: 24 }}>
                 {bingoLetter(state.lastNumber, state.settings.bingoMax)}
@@ -372,6 +384,20 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
               </span>
             )}
           </div>
+          <label className="row small nowrap" title="The highest number on your cards. Fewer numbers make a shorter game.">
+            <span className="muted">Numbers 1 to</span>
+            <input
+              className="max-input"
+              type="number"
+              min={BINGO_MIN}
+              max={BINGO_LIMIT}
+              value={maxDraft}
+              onChange={(e) => setMaxDraft(e.target.value)}
+              onBlur={applyMax}
+              onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+            />
+            {max === 75 && <span className="muted">(B-I-N-G-O)</span>}
+          </label>
           <div className="row small">
             <span className="muted">Numbers:</span>
             <span className="mode-switch" role="group" aria-label="Where the numbers come from">
@@ -383,7 +409,7 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
               </button>
             </span>
           </div>
-          <div className={`board board-${max}`}>
+          <div className={`board ${max === 75 ? 'board-75' : 'board-10'}`}>
             {Array.from({ length: max }, (_, i) => i + 1).map((n) => {
               const on = state.drawn.includes(n);
               const cls = `cell ${on ? 'on' : ''} ${n === state.lastNumber ? 'last' : ''}`;
@@ -416,7 +442,7 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
               New round
             </button>
           </div>
-          {state.settings.bingoMax === 75 && (
+          {max === 75 && (
             <div className="card-check">
               <strong>Check a printed card</strong>
               <div className="row nowrap">
@@ -448,7 +474,18 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
 
         {/* ---------- players & groups ---------- */}
         <section className="panel people">
-          <h3>Groups ({state.groups.length})</h3>
+          <div className="row small">
+            <span className="muted">Play:</span>
+            <span className="mode-switch" role="group" aria-label="Individual or groups">
+              <button className={state.settings.playAs === 'individual' ? 'on' : ''} onClick={() => act('playAs', { value: 'individual' })} title="Everyone plays for themselves; phones don't ask for a group">
+                👤 Individual
+              </button>
+              <button className={state.settings.playAs === 'groups' ? 'on' : ''} onClick={() => act('playAs', { value: 'groups' })} title="Players join a group for their table; groups get their own ranking">
+                👥 Groups
+              </button>
+            </span>
+          </div>
+          {state.settings.playAs === 'groups' && <h3>Groups ({state.groups.length})</h3>}
           <ol className="rank-list">
             {state.groups.map((g) => (
               <li key={g.id}>
@@ -457,7 +494,7 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
                 <strong>{g.score}</strong>
               </li>
             ))}
-            {!state.groups.length && <li className="muted">No groups yet</li>}
+            {!state.groups.length && state.settings.playAs === 'groups' && <li className="muted">No groups yet</li>}
           </ol>
           <h3>Players ({state.players.length})</h3>
           <ol className="rank-list players">

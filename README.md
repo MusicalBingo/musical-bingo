@@ -36,7 +36,7 @@ Everything you need to run a Musical Bingo night: regular bingo on paper cards, 
 - **Picture** (optional): appears **piece by piece** (2×2 up to 8×8 tiles) or **from blurry to sharp** while the timer runs. It is shown fully at the reveal.
 - **Time** and **points** per question.
 
-**Quiz settings**: default time and points, the **bonus for the first correct answer**, 75 or 90 bingo numbers, group score as **sum** or **average per member**, whether phones show the answer texts, and whether to reveal the answer automatically.
+**Quiz settings**: default time and points, the **bonus for the first correct answer**, the highest bingo number (10–99; 75 for B-I-N-G-O cards), whether people play **individually or in groups**, group score as **sum** or **average per member**, whether phones show the answer texts, and whether to reveal the answer automatically.
 
 Save with the button or **Ctrl+S**.
 
@@ -78,10 +78,14 @@ Each quiz has two download buttons:
 
 **Start game** gives you a 5-digit game code and opens the control panel.
 
-1. **Lobby**: players join with their name, then create a group for their table or tap a group that already exists. They can also play solo.
+1. **Lobby**: players join with their name. **Play: 👤 Individual / 👥 Groups** in the control panel decides the rest (the quiz settings give the default, and you can switch at any time):
+   - **Groups**: each phone asks the player to tap their table's group, or create it if they're first. The leaderboard puts groups first, and the final podium shows the best groups, with the best players underneath.
+   - **Individual**: phones don't mention groups at all, and the leaderboard and podium show players only. Groups made earlier are kept and come back if you switch to Groups.
 2. **Call a number**: the big screen shows the ball and players mark their paper cards. The bingo panel has two modes (the laptop remembers your choice):
    - **🎱 Ball machine** (default): draw a real ball, type its number in the big box and press Enter, or click the number on the board. Typing a number anywhere on the page goes into the box. `B12` works too, and the app refuses a letter that doesn't match (`B40`), which catches misreads. **↶ Undo** takes back a typo.
    - **🎲 Random**: **Draw number** (`D`) lets the app pick.
+
+   **Numbers 1 to …** in the bingo panel sets the highest number for this game, to match your cards (e.g. 40 for custom cards that only go up to 40). Fewer numbers make a shorter game. The board, the big screen and the random draw follow it, and the quiz keeps its own default. You can change it during the game, but not below a number that has already been called. B-I-N-G-O letters only appear with 75.
 3. **▶ Start question** (`S`): the music plays on the big screen, the picture starts uncovering, and phones show the answer buttons.
 4. **✔ Show answer** (`R`) happens automatically when time runs out or everyone has answered. The big screen shows the right answer, how many people chose each answer, and the **fastest** right answer.
 5. **🏆 Leaderboard** (`L`) whenever you like. Then draw the next number.

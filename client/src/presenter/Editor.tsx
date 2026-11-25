@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ANSWER_STYLES, KIND_LABELS, type Question, type QuestionKind, type Quiz, type QuizSettings } from '../../../shared/types.ts';
+import { ANSWER_STYLES, BINGO_LIMIT, BINGO_MIN, KIND_LABELS, type Question, type QuestionKind, type Quiz, type QuizSettings } from '../../../shared/types.ts';
 import { parseYouTube } from '../../../shared/util.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { ClipPlayer, ImageReveal } from '../common/media.tsx';
@@ -286,11 +286,19 @@ function SettingsForm({ quiz, onChange, onApplyDefaults }: { quiz: Quiz; onChang
         Apply default time and points to all questions
       </button>
       <div className="grid3">
+        <NumberField
+          label="Highest bingo number"
+          value={s.bingoMax}
+          min={BINGO_MIN}
+          max={BINGO_LIMIT}
+          suffix="75 = B-I-N-G-O cards; can be changed in the game"
+          onChange={(v) => set({ bingoMax: v })}
+        />
         <label className="field">
-          <span>Bingo numbers</span>
-          <select value={s.bingoMax} onChange={(e) => set({ bingoMax: Number(e.target.value) as 75 | 90 })}>
-            <option value={75}>1–75 (B-I-N-G-O cards)</option>
-            <option value={90}>1–90</option>
+          <span>Play</span>
+          <select value={s.playAs} onChange={(e) => set({ playAs: e.target.value as 'individual' | 'groups' })}>
+            <option value="groups">In groups (tables play together)</option>
+            <option value="individual">Individually (everyone for themselves)</option>
           </select>
         </label>
         <label className="field">

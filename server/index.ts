@@ -383,6 +383,10 @@ io.on('connection', (socket: Socket<any, any, any, SocketData>) => {
         return ack(game.draw(msg.number == null || msg.number === '' ? undefined : Number(msg.number)));
       case 'undoDraw':
         return ack(game.undoDraw());
+      case 'bingoMax':
+        return ack(game.setBingoMax(Number(msg.max)));
+      case 'playAs':
+        return ack(game.setPlayAs(msg.value));
       case 'resetBingo':
         return ack(game.resetBingo());
       case 'start':
