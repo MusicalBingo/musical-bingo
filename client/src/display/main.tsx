@@ -4,9 +4,11 @@ import '../common/base.css';
 import './display.css';
 import { ANSWER_STYLES, KIND_LABELS, type GameSummary, type PublicState } from '../../../shared/types.ts';
 import { bingoLetter } from '../../../shared/util.ts';
+import { themeById } from '../../../shared/themes.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { ClipPlayer, ImageReveal } from '../common/media.tsx';
 import { emit, getSocket, joinBaseUrl, qrUrl, serverNow, useConnection, useGameState, useTicker } from '../common/net.ts';
+import { ThemeDecor, useTheme } from '../common/theme.tsx';
 
 function App() {
   const [code, setCode] = useState(() => new URLSearchParams(location.search).get('code') || '');
@@ -91,6 +93,7 @@ function Stage({ code, onLost }: { code: string; onLost: () => void }) {
     };
   }, []);
 
+  useTheme(msg?.state.settings.theme);
   const state = msg?.state;
   if (!state) return <div className="stage center muted">{connected ? 'Loading…' : 'Connecting to the server…'}</div>;
   const joinUrl = `${joinBase}/play?code=${state.code}`;
@@ -117,6 +120,7 @@ function Stage({ code, onLost }: { code: string; onLost: () => void }) {
 
   return (
     <div className="stage">
+      <ThemeDecor id={state.settings.theme} count={26} />
       {!connected && <div className="offline">Connection to the server lost, reconnecting…</div>}
       {content}
       {state.phase !== 'lobby' && (
@@ -150,7 +154,9 @@ function Lobby({ state, joinUrl }: { state: PublicState; joinUrl: string }) {
   return (
     <div className="lobby">
       <div className="lobby-join">
-        <h1 className="title">🎵 {state.title}</h1>
+        <h1 className="title">
+          {themeById(state.settings.theme).emoji} {state.title}
+        </h1>
         <img className="qr" src={qrUrl(joinUrl)} alt="QR code to join" />
         <p className="join-url">{joinUrl.replace(/^https?:\/\//, '')}</p>
         <p className="join-code">

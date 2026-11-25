@@ -387,6 +387,8 @@ io.on('connection', (socket: Socket<any, any, any, SocketData>) => {
         return ack(game.setBingoMax(Number(msg.max)));
       case 'playAs':
         return ack(game.setPlayAs(msg.value));
+      case 'theme':
+        return ack(game.setTheme(msg.value));
       case 'resetBingo':
         return ack(game.resetBingo());
       case 'start':

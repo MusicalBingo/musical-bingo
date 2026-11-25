@@ -36,9 +36,26 @@ Everything you need to run a Musical Bingo night: regular bingo on paper cards, 
 - **Picture** (optional): appears **piece by piece** (2×2 up to 8×8 tiles) or **from blurry to sharp** while the timer runs. It is shown fully at the reveal.
 - **Time** and **points** per question.
 
-**Quiz settings**: default time and points, the **bonus for the first correct answer**, the highest bingo number (10–99; 75 for B-I-N-G-O cards), whether people play **individually or in groups**, group score as **sum** or **average per member**, whether phones show the answer texts, and whether to reveal the answer automatically.
+**Quiz settings**: default time and points, the **bonus for the first correct answer**, the highest bingo number (10–99; 75 for B-I-N-G-O cards), whether people play **individually or in groups**, the **theme**, group score as **sum** or **average per member**, whether phones show the answer texts, and whether to reveal the answer automatically.
 
 Save with the button or **Ctrl+S**.
+
+### Holiday themes
+
+**Theme** dresses up the big screen and the phones for the occasion. The presenter app keeps its usual look.
+
+| Theme | Look |
+| --- | --- |
+| 🎵 Classic | the usual purple and gold, no decorations |
+| 🎄 Christmas | pine green with a red glow, gold balls, falling snow |
+| 🥂 New Year | midnight blue, champagne gold, falling confetti |
+| 💘 Valentine's Day | deep rose, pink balls, rising hearts |
+| 🍀 St Patrick's Day | Irish green, gold balls, falling shamrocks |
+| 🐰 Easter | lavender, falling tulips, chicks and eggs |
+| 🎃 Halloween | near-black and purple, pumpkin-orange balls, bats and ghosts |
+| ☀️ Summer party | sea teal, sunny yellow, palms and cocktails |
+
+Set it in the quiz settings, or change it during the game from the control panel (**Theme**), and every screen switches straight away. The answer colours and shapes stay the same in every theme. Decorations are skipped on devices set to reduce motion.
 
 ### Preparing a quiz in Excel
 

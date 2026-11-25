@@ -6,6 +6,7 @@ import { ANSWER_STYLES, KIND_LABELS, type PlayerYou, type PublicState } from '..
 import { bingoLetter } from '../../../shared/util.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { emit, getSocket, serverNow, storage, store, useConnection, useGameState, useTicker } from '../common/net.ts';
+import { ThemeDecor, useTheme } from '../common/theme.tsx';
 import { keepAwakeStatus, setKeepAwake } from '../common/keepAwake.ts';
 
 interface Session {
@@ -68,6 +69,7 @@ function App() {
   // Keep the screen on until the game is over, closed or the player removed (also on the join screen: the first tap there starts it).
   const ended = msg?.state.phase === 'ended' || (!session && /closed|removed/i.test(notice));
   useEffect(() => setKeepAwake(!ended), [ended]);
+  useTheme(msg?.state.settings.theme);
 
   if (!session)
     return (
@@ -87,6 +89,7 @@ function App() {
   const you = msg?.you;
   return (
     <div className="app">
+      {state && <ThemeDecor id={state.settings.theme} count={12} faint />}
       {!connected && <div className="offline">Connection lost, reconnecting…</div>}
       {state && you ? (
         <GameScreen state={state} you={you} onLeave={() => {

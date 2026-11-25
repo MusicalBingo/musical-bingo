@@ -162,7 +162,7 @@ body,
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 80px rgba(255, 200, 61, 0.45);
+  box-shadow: 0 0 80px var(--accent-shadow);
   animation: drop 0.9s cubic-bezier(0.2, 1.4, 0.4, 1);
 }
 .mega-ball small {
@@ -207,7 +207,7 @@ body,
 }
 .bcell.on {
   background: var(--accent);
-  color: #241800;
+  color: var(--accent-ink);
   font-weight: 800;
 }
 .bcell.last {
@@ -342,8 +342,8 @@ body,
 }
 .first-banner {
   text-align: center;
-  background: rgba(255, 200, 61, 0.15);
-  border: 1px solid rgba(255, 200, 61, 0.5);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
   border-radius: 999px;
   padding: 0.4em 1em;
   align-self: center;
@@ -441,7 +441,7 @@ body,
   animation: rise 0.5s ease both;
 }
 .lb-col li:first-child {
-  background: rgba(255, 200, 61, 0.2);
+  background: var(--accent-soft);
 }
 .rank {
   width: 1.6em;
@@ -483,7 +483,7 @@ body,
 }
 .podium-block {
   width: 100%;
-  background: linear-gradient(#7e3fbf, #3d2a85);
+  background: linear-gradient(var(--hero-1), var(--hero-2));
   border-radius: 0.4em 0.4em 0 0;
   display: grid;
   place-items: center;
@@ -550,7 +550,7 @@ body,
   inset: 0;
   display: grid;
   place-items: center;
-  background: rgba(10, 6, 30, 0.75);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 20;
   animation: fade 0.4s ease;
 }
@@ -562,8 +562,8 @@ body,
   line-height: 1.2;
   padding: 1em 1.4em;
   border-radius: 0.5em;
-  background: linear-gradient(135deg, #7e3fbf, #c2337f);
-  box-shadow: 0 0 120px rgba(194, 51, 127, 0.5);
+  background: linear-gradient(135deg, var(--hero-1), var(--hero-3));
+  box-shadow: 0 0 120px var(--hero-glow);
   animation: pop-in 0.6s cubic-bezier(0.2, 1.5, 0.4, 1);
 }
 @keyframes fade {

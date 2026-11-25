@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ANSWER_STYLES, BINGO_LIMIT, BINGO_MIN, KIND_LABELS } from '../../../shared/types.ts';
 import { bingoLetter } from '../../../shared/util.ts';
+import { THEMES } from '../../../shared/themes.ts';
 import type { CardCheck } from '../../../shared/bingo.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { emit, joinBaseUrl, qrUrl, serverNow, useConnection, useGameState, useTicker } from '../common/net.ts';
@@ -474,6 +475,16 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
 
         {/* ---------- players & groups ---------- */}
         <section className="panel people">
+          <label className="row small nowrap">
+            <span className="muted">Theme:</span>
+            <select value={state.settings.theme} onChange={(e) => act('theme', { value: e.target.value })} style={{ width: 'auto', padding: '4px 8px' }}>
+              {THEMES.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.emoji} {t.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="row small">
             <span className="muted">Play:</span>
             <span className="mode-switch" role="group" aria-label="Individual or groups">

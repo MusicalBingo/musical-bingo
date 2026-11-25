@@ -311,7 +311,7 @@ input {
 .bonus {
   font-size: 16px;
   color: #fff;
-  background: rgba(255, 200, 61, 0.2);
+  background: var(--accent-soft);
   border-radius: 999px;
   padding: 4px 12px;
   margin-top: 4px;

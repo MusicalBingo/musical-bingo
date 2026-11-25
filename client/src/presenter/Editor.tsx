@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ANSWER_STYLES, BINGO_LIMIT, BINGO_MIN, KIND_LABELS, type Question, type QuestionKind, type Quiz, type QuizSettings } from '../../../shared/types.ts';
 import { parseYouTube } from '../../../shared/util.ts';
+import { THEMES, type ThemeId } from '../../../shared/themes.ts';
 import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { ClipPlayer, ImageReveal } from '../common/media.tsx';
 import { AuthError, api, go, uploadFile } from './api.ts';
@@ -294,6 +295,16 @@ function SettingsForm({ quiz, onChange, onApplyDefaults }: { quiz: Quiz; onChang
           suffix="75 = B-I-N-G-O cards; can be changed in the game"
           onChange={(v) => set({ bingoMax: v })}
         />
+        <label className="field">
+          <span>Theme (big screen and phones)</span>
+          <select value={s.theme} onChange={(e) => set({ theme: e.target.value as ThemeId })}>
+            {THEMES.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.emoji} {t.name}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="field">
           <span>Play</span>
           <select value={s.playAs} onChange={(e) => set({ playAs: e.target.value as 'individual' | 'groups' })}>

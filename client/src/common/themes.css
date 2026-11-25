@@ -1,0 +1,215 @@
+/* Holiday themes for the big screen and the phones (see shared/themes.ts). Each block only swaps colours;
+   the layout is the same for every theme. The presenter app always uses Classic. */
+
+:root[data-theme='christmas'] {
+  --bg: #0a2418;
+  --bg-2: #12372a;
+  --glow: #7a1820;
+  --glow-2: #1d5a3c;
+  --muted: #c9e2d3;
+  --accent: #f4c542;
+  --accent-light: #fff1b8;
+  --accent-deep: #b8860b;
+  --accent-ink: #2a1c00;
+  --accent-soft: rgba(244, 197, 66, 0.18);
+  --accent-line: rgba(244, 197, 66, 0.5);
+  --accent-shadow: rgba(244, 197, 66, 0.45);
+  --hero-1: #c8202f;
+  --hero-2: #6e0f18;
+  --hero-3: #1f7a4a;
+  --hero-glow: rgba(200, 32, 47, 0.5);
+  --tile-1: #1f5c3f;
+  --tile-2: #0e2e20;
+}
+
+:root[data-theme='newyear'] {
+  --bg: #060a1c;
+  --bg-2: #0f1838;
+  --glow: #24337d;
+  --glow-2: #4a2a6e;
+  --muted: #c3cbe8;
+  --accent: #f2d27a;
+  --accent-light: #fff6d8;
+  --accent-deep: #b08a2e;
+  --accent-ink: #241a00;
+  --accent-soft: rgba(242, 210, 122, 0.18);
+  --accent-line: rgba(242, 210, 122, 0.5);
+  --accent-shadow: rgba(242, 210, 122, 0.5);
+  --hero-1: #2f45b0;
+  --hero-2: #121b4d;
+  --hero-3: #9b6bd6;
+  --hero-glow: rgba(155, 107, 214, 0.5);
+  --tile-1: #24337d;
+  --tile-2: #0f1838;
+}
+
+:root[data-theme='valentine'] {
+  --bg: #22081a;
+  --bg-2: #36102a;
+  --glow: #8a1c4a;
+  --glow-2: #5a0f30;
+  --muted: #f0c4d6;
+  --accent: #ff7aa8;
+  --accent-light: #ffd6e5;
+  --accent-deep: #c2185b;
+  --accent-ink: #3a0019;
+  --accent-soft: rgba(255, 122, 168, 0.18);
+  --accent-line: rgba(255, 122, 168, 0.5);
+  --accent-shadow: rgba(255, 122, 168, 0.45);
+  --hero-1: #d42a64;
+  --hero-2: #6e0f3a;
+  --hero-3: #ff6f61;
+  --hero-glow: rgba(224, 48, 111, 0.5);
+  --tile-1: #6e1a45;
+  --tile-2: #36102a;
+}
+
+:root[data-theme='stpatrick'] {
+  --bg: #05231a;
+  --bg-2: #0b3527;
+  --glow: #1d7a42;
+  --glow-2: #0f4d2c;
+  --muted: #bfe3cd;
+  --accent: #ffd34d;
+  --accent-light: #fff2b0;
+  --accent-deep: #c79a00;
+  --accent-ink: #2a1f00;
+  --accent-soft: rgba(255, 211, 77, 0.18);
+  --accent-line: rgba(255, 211, 77, 0.5);
+  --accent-shadow: rgba(255, 211, 77, 0.45);
+  --hero-1: #1c9447;
+  --hero-2: #0b4d24;
+  --hero-3: #e8861a;
+  --hero-glow: rgba(31, 157, 74, 0.5);
+  --tile-1: #13603a;
+  --tile-2: #0b3527;
+}
+
+:root[data-theme='easter'] {
+  --bg: #1e1940;
+  --bg-2: #2b2457;
+  --glow: #6a4fb3;
+  --glow-2: #2f7a64;
+  --muted: #d6d0f0;
+  --accent: #ffe27a;
+  --accent-light: #fff6cf;
+  --accent-deep: #d4a500;
+  --accent-ink: #2a2200;
+  --accent-soft: rgba(255, 226, 122, 0.18);
+  --accent-line: rgba(255, 226, 122, 0.5);
+  --accent-shadow: rgba(255, 226, 122, 0.45);
+  --hero-1: #a855c0;
+  --hero-2: #4a2f80;
+  --hero-3: #2fa07a;
+  --hero-glow: rgba(168, 85, 192, 0.5);
+  --tile-1: #4a3f8c;
+  --tile-2: #2b2457;
+}
+
+:root[data-theme='halloween'] {
+  --bg: #100a12;
+  --bg-2: #1d1220;
+  --glow: #5a2a00;
+  --glow-2: #3a1450;
+  --muted: #d8c6dc;
+  --accent: #ff8c1a;
+  --accent-light: #ffd09a;
+  --accent-deep: #c25700;
+  --accent-ink: #2a1000;
+  --accent-soft: rgba(255, 140, 26, 0.18);
+  --accent-line: rgba(255, 140, 26, 0.5);
+  --accent-shadow: rgba(255, 140, 26, 0.45);
+  --hero-1: #6a2a9c;
+  --hero-2: #2a0f45;
+  --hero-3: #d45f00;
+  --hero-glow: rgba(255, 122, 0, 0.45);
+  --tile-1: #3a1f45;
+  --tile-2: #1d1220;
+}
+
+:root[data-theme='summer'] {
+  --bg: #04232e;
+  --bg-2: #083845;
+  --glow: #0b7a86;
+  --glow-2: #8a3f1e;
+  --muted: #bfe3ea;
+  --accent: #ffd23f;
+  --accent-light: #fff3b0;
+  --accent-deep: #e09b00;
+  --accent-ink: #2a2000;
+  --accent-soft: rgba(255, 210, 63, 0.18);
+  --accent-line: rgba(255, 210, 63, 0.5);
+  --accent-shadow: rgba(255, 210, 63, 0.45);
+  --hero-1: #008f99;
+  --hero-2: #035060;
+  --hero-3: #f0604a;
+  --hero-glow: rgba(255, 111, 89, 0.45);
+  --tile-1: #0b5a68;
+  --tile-2: #083845;
+}
+
+/* ---------- decorations: a layer behind everything, never in the way of a tap ---------- */
+#root {
+  position: relative;
+  z-index: 1;
+}
+.decor {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1; /* inside #root's layer: above the page background, below everything else */
+}
+.decor i {
+  position: absolute;
+  left: var(--x);
+  top: -8vh;
+  font-style: normal;
+  font-size: var(--s);
+  line-height: 1;
+  color: var(--c, #fff);
+  opacity: var(--o);
+  will-change: transform;
+  animation: decor-fall var(--d) linear var(--delay) infinite;
+}
+.decor.rise i {
+  top: auto;
+  bottom: -8vh;
+  animation-name: decor-rise;
+}
+.decor.twinkle i {
+  top: var(--y);
+  animation: decor-twinkle var(--d) ease-in-out var(--delay) infinite;
+}
+@keyframes decor-fall {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(var(--sway), 118vh, 0) rotate(var(--spin));
+  }
+}
+@keyframes decor-rise {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(var(--sway), -118vh, 0) rotate(var(--spin));
+  }
+}
+@keyframes decor-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6) rotate(-8deg);
+  }
+  50% {
+    opacity: var(--o);
+    transform: scale(1) rotate(8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .decor {
+    display: none;
+  }
+}

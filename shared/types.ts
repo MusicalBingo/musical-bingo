@@ -1,4 +1,5 @@
 // Types and constants shared by the server and all three web apps.
+import type { ThemeId } from './themes.ts';
 
 export type QuestionKind = 'song' | 'singer' | 'band' | 'other';
 export type MediaSource = 'none' | 'youtube' | 'audio';
@@ -50,6 +51,8 @@ export interface QuizSettings {
   firstBonus: number;
   /** highest bingo ball: 75 = B-I-N-G-O cards, 90 = UK cards, or anything in between for custom cards */
   bingoMax: number;
+  /** holiday look of the big screen and the phones */
+  theme: ThemeId;
   /** everyone for themselves, or tables play as groups */
   playAs: 'individual' | 'groups';
   /** group score = sum of members' points, or the average per member */
@@ -84,6 +87,7 @@ export const DEFAULT_SETTINGS: QuizSettings = {
   firstBonus: 50,
   bingoMax: 75,
   playAs: 'groups',
+  theme: 'classic',
   groupScoring: 'sum',
   answersOnPhones: true,
   autoReveal: true,

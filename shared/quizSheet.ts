@@ -1,6 +1,7 @@
 // Quiz <-> Excel workbook. One row per question on the "Questions" sheet, quiz options on "Settings".
 import { ANSWER_STYLES, DEFAULT_SETTINGS, type Question, type QuestionKind, type Quiz, type QuizSettings } from './types.ts';
 import { parseYouTube } from './util.ts';
+import { THEMES, parseTheme, themeById } from './themes.ts';
 import { readXlsx, writeXlsx, type CellValue, type SheetData, type WriteColumn } from './xlsx.ts';
 
 type Field = 'kind' | 'text' | 'a1' | 'a2' | 'a3' | 'a4' | 'correct' | 'clip' | 'start' | 'length' | 'video' | 'picture' | 'reveal' | 'grid' | 'time' | 'points';
@@ -133,6 +134,7 @@ export function quizToXlsx(quiz: Pick<Quiz, 'title' | 'description' | 'settings'
     ['Default points', s.defaultPoints, 'Used when a question leaves "Points" empty'],
     ['Bonus for first correct answer', s.firstBonus, ''],
     ['Bingo numbers', s.bingoMax, 'Highest number, 10 to 99 (75 = B-I-N-G-O cards). Can also be changed during the game.'],
+    ['Theme', themeById(s.theme).name, `${THEMES.map((t) => t.name).join(', ')}. Can also be changed during the game.`],
     ['Play as', s.playAs, 'individual, or groups (tables play together). Can also be changed during the game.'],
     ['Group score', s.groupScoring, 'sum, or average (per member)'],
     ['Show answers on phones', s.answersOnPhones ? 'yes' : 'no', 'no = phones show only the coloured shapes'],
@@ -231,6 +233,7 @@ function readSettings(sheet: SheetData | undefined): { title: string; descriptio
     else if (/second|time/.test(key) && !/reveal/.test(key)) Number.isFinite(n) && (s.defaultTime = n);
     else if (/point/.test(key)) Number.isFinite(n) && (s.defaultPoints = n);
     else if (/bingo|number|ball/.test(key)) Number.isFinite(n) && (s.bingoMax = n);
+    else if (/theme|look|holiday/.test(key)) s.theme = parseTheme(v);
     else if (/^play|team|individ/.test(key)) s.playAs = /ind|solo|single|own|alone/i.test(clean(v)) ? 'individual' : 'groups';
     else if (/group/.test(key)) s.groupScoring = /av/i.test(clean(v)) ? 'average' : 'sum';
     else if (/phone/.test(key)) s.answersOnPhones = yes(v);

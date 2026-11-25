@@ -12,6 +12,7 @@ import {
   type QuizSummary,
 } from '../shared/types.ts';
 import { clamp } from '../shared/util.ts';
+import { THEMES } from '../shared/themes.ts';
 
 export const DATA_DIR = path.resolve(process.env.DATA_DIR || 'data');
 export const QUIZ_DIR = path.join(DATA_DIR, 'quizzes');
@@ -87,6 +88,7 @@ export function normalizeSettings(s: any): QuizSettings {
     firstBonus: clamp(Math.round(num(s.firstBonus, DEFAULT_SETTINGS.firstBonus)), 0, 100000),
     bingoMax: clamp(Math.round(num(s.bingoMax, DEFAULT_SETTINGS.bingoMax)), BINGO_MIN, BINGO_LIMIT),
     playAs: s.playAs === 'individual' ? 'individual' : 'groups',
+    theme: THEMES.some((t) => t.id === s.theme) ? s.theme : 'classic',
     groupScoring: s.groupScoring === 'average' ? 'average' : 'sum',
     answersOnPhones: s.answersOnPhones !== false,
     autoReveal: s.autoReveal !== false,

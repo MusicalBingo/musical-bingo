@@ -12,6 +12,7 @@ import type {
   RevealInfo,
 } from '../shared/types.ts';
 import { BINGO_LIMIT, BINGO_MIN, DEFAULT_SETTINGS } from '../shared/types.ts';
+import { THEMES } from '../shared/themes.ts';
 
 interface Player {
   id: string;
@@ -151,6 +152,15 @@ export class Game {
   setPlayAs(value: unknown): Result {
     if (value !== 'individual' && value !== 'groups') return { ok: false, error: 'Choose individual or groups.' };
     this.quiz.settings = { ...this.quiz.settings, playAs: value };
+    this.changed();
+    return { ok: true };
+  }
+
+  /** Holiday look for this game's big screen and phones. */
+  setTheme(value: unknown): Result {
+    const t = THEMES.find((x) => x.id === value);
+    if (!t) return { ok: false, error: 'Unknown theme.' };
+    this.quiz.settings = { ...this.quiz.settings, theme: t.id };
     this.changed();
     return { ok: true };
   }
