@@ -435,6 +435,57 @@ legend {
 .board .cell.last {
   outline: 2px solid #fff;
 }
+.board button.cell {
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 11px;
+}
+.board button.cell:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22);
+  color: var(--text);
+}
+.board button.cell:disabled {
+  cursor: default;
+}
+.call-box {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  grid-column: span 2;
+}
+.call-box input {
+  flex: 1;
+  min-width: 0;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+.call-box input::placeholder {
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: none;
+}
+.mode-switch {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.mode-switch button {
+  border: 0;
+  background: transparent;
+  padding: 6px 10px;
+  font-weight: 600;
+}
+.mode-switch button + button {
+  border-left: 1px solid var(--line);
+}
+.mode-switch button.on {
+  background: var(--accent);
+  color: #1b1300;
+}
 .card-check {
   display: flex;
   flex-direction: column;

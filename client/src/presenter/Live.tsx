@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ANSWER_STYLES, KIND_LABELS } from '../../../shared/types.ts';
 import { bingoLetter } from '../../../shared/util.ts';
 import type { CardCheck } from '../../../shared/bingo.ts';
@@ -6,6 +6,28 @@ import { AnswerIcon, answerColor } from '../common/Shape.tsx';
 import { emit, joinBaseUrl, qrUrl, serverNow, useConnection, useGameState, useTicker } from '../common/net.ts';
 import { AuthError, api, getToken, go } from './api.ts';
 import { BingoCardView } from './Cards.tsx';
+
+type DrawMode = 'machine' | 'random';
+const MODE_KEY = 'mb-draw-mode';
+
+function savedMode(): DrawMode {
+  try {
+    return localStorage.getItem(MODE_KEY) === 'random' ? 'random' : 'machine';
+  } catch {
+    return 'machine';
+  }
+}
+
+/** Reads what the presenter typed for a ball: "12", "B12", "b 12", "N-35". Returns the number or an error. */
+function parseBall(raw: string, max: number): number | string {
+  const m = raw.trim().toUpperCase().match(/^([BINGO])?\s*-?\s*(\d{1,2})$/);
+  if (!m) return 'Type the number on the ball, e.g. 12 or B12.';
+  const n = Number(m[2]);
+  if (n < 1 || n > max) return `Numbers go from 1 to ${max}.`;
+  const letter = bingoLetter(n, max);
+  if (m[1] && max === 75 && m[1] !== letter) return `${m[1]}${n} doesn't exist: ${n} is in the ${letter} column. Check the ball.`;
+  return n;
+}
 
 const PHASE_TEXT: Record<string, string> = {
   lobby: 'Lobby: players are joining',
@@ -27,6 +49,15 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
   const [cardId, setCardId] = useState('');
   const [card, setCard] = useState<CardCheck | null>(null);
   const [cardErr, setCardErr] = useState('');
+  const [mode, setModeState] = useState<DrawMode>(savedMode);
+  const callInput = useRef<HTMLInputElement>(null);
+
+  const setMode = (m: DrawMode) => {
+    setModeState(m);
+    try {
+      localStorage.setItem(MODE_KEY, m);
+    } catch {}
+  };
 
   const connected = useConnection(async () => {
     const r = await emit('presenter:attach', { code, token: getToken() });
@@ -57,16 +88,27 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).closest('input, textarea, select') || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const target = e.target as HTMLElement;
+      // the ball box only takes numbers and B I N G O, so the other shortcuts keep working while it has the focus
+      const inCallBox = target === callInput.current;
+      if (!inCallBox && target.closest('input, textarea, select')) return;
       const k = e.key.toLowerCase();
-      if (k === 'd') void act('draw');
-      else if (k === 's') void act('start', { index: nextIndex ?? undefined });
-      else if (k === 'r') void act('reveal');
-      else if (k === 'l') void act('leaderboard');
+      const shortcut = (f: () => void) => {
+        e.preventDefault();
+        f();
+      };
+      if (k === 'd') {
+        if (mode === 'random') shortcut(() => void act('draw'));
+        else shortcut(() => callInput.current?.select());
+      } else if (k === 's') shortcut(() => void act('start', { index: nextIndex ?? undefined }));
+      else if (k === 'r') shortcut(() => void act('reveal'));
+      else if (k === 'l') shortcut(() => void act('leaderboard'));
+      else if (mode === 'machine' && !inCallBox && /^[0-9bingo]$/.test(k)) callInput.current?.focus(); // start typing a ball anywhere
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [nextIndex]);
+  }, [nextIndex, mode]);
 
   if (missing)
     return (
@@ -92,6 +134,16 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
 
   const primary =
     state.phase === 'number' ? 'start' : state.phase === 'question' ? 'reveal' : state.phase === 'ended' ? '' : 'draw';
+
+  const max = state.settings.bingoMax;
+  const ballName = (n: number) => `${bingoLetter(n, max)}${n}`;
+  const callBall = async (raw: string) => {
+    const n = parseBall(raw, max);
+    if (typeof n === 'string') return setErr(n);
+    if (state.drawn.includes(n)) return setErr(`${ballName(n)} has already been called.`);
+    const r = await act('draw', { number: n });
+    if (r.ok) setManual('');
+  };
 
   const checkCard = async () => {
     setCardErr('');
@@ -148,9 +200,33 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
         {/* ---------- main flow ---------- */}
         <section className="panel flow">
           <div className="flow-buttons">
-            <button className={`btn big ${primary === 'draw' ? 'primary' : ''}`} onClick={() => act('draw')} title="Shortcut: D">
-              🎱 Draw number
-            </button>
+            {mode === 'random' ? (
+              <button className={`btn big ${primary === 'draw' ? 'primary' : ''}`} onClick={() => act('draw')} title="Shortcut: D">
+                🎲 Draw number
+              </button>
+            ) : (
+              <form
+                className="call-box"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (manual.trim()) void callBall(manual);
+                }}
+              >
+                <input
+                  ref={callInput}
+                  value={manual}
+                  onChange={(e) => setManual(e.target.value.replace(/[^0-9bingoBINGO\s-]/g, ''))}
+                  placeholder="Ball no."
+                  inputMode="numeric"
+                  autoComplete="off"
+                  aria-label="Number on the ball"
+                  title="Type the number on the ball and press Enter, or click it on the board"
+                />
+                <button className={`btn big ${primary === 'draw' ? 'primary' : ''}`} disabled={!manual.trim()} title="Enter">
+                  🎱 Call
+                </button>
+              </form>
+            )}
             <button
               className={`btn big ${primary === 'start' ? 'primary' : ''}`}
               disabled={!hasNext}
@@ -296,38 +372,40 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
               </span>
             )}
           </div>
-          <div className={`board board-${state.settings.bingoMax}`}>
-            {Array.from({ length: state.settings.bingoMax }, (_, i) => i + 1).map((n) => (
-              <span key={n} className={`cell ${state.drawn.includes(n) ? 'on' : ''} ${n === state.lastNumber ? 'last' : ''}`}>
-                {n}
-              </span>
-            ))}
+          <div className="row small">
+            <span className="muted">Numbers:</span>
+            <span className="mode-switch" role="group" aria-label="Where the numbers come from">
+              <button className={mode === 'machine' ? 'on' : ''} onClick={() => setMode('machine')} title="You draw the balls; type or click each number">
+                🎱 Ball machine
+              </button>
+              <button className={mode === 'random' ? 'on' : ''} onClick={() => setMode('random')} title="The app picks a random number">
+                🎲 Random
+              </button>
+            </span>
           </div>
+          <div className={`board board-${max}`}>
+            {Array.from({ length: max }, (_, i) => i + 1).map((n) => {
+              const on = state.drawn.includes(n);
+              const cls = `cell ${on ? 'on' : ''} ${n === state.lastNumber ? 'last' : ''}`;
+              return mode === 'machine' ? (
+                <button key={n} className={cls} disabled={on} onClick={() => callBall(String(n))} title={on ? `${ballName(n)} called` : `Call ${ballName(n)}`}>
+                  {n}
+                </button>
+              ) : (
+                <span key={n} className={cls}>
+                  {n}
+                </span>
+              );
+            })}
+          </div>
+          {mode === 'machine' && (
+            <p className="muted small" style={{ margin: 0 }}>
+              Type each ball in the box on the left and press Enter, or click it here.
+            </p>
+          )}
           <div className="row nowrap small">
-            <input
-              value={manual}
-              onChange={(e) => setManual(e.target.value)}
-              placeholder="Number from a ball machine"
-              inputMode="numeric"
-              onKeyDown={async (e) => {
-                if (e.key === 'Enter' && manual) {
-                  const r = await act('draw', { number: manual });
-                  if (r.ok) setManual('');
-                }
-              }}
-            />
-            <button
-              className="btn small"
-              disabled={!manual}
-              onClick={async () => {
-                const r = await act('draw', { number: manual });
-                if (r.ok) setManual('');
-              }}
-            >
-              Add
-            </button>
-            <button className="btn small" onClick={() => act('undoDraw')} disabled={!state.drawn.length}>
-              Undo last
+            <button className="btn small" onClick={() => act('undoDraw')} disabled={!state.drawn.length} title="Take back the last number (e.g. a typo)">
+              ↶ Undo {state.lastNumber != null ? ballName(state.lastNumber) : 'last'}
             </button>
             <button
               className="btn small danger"
@@ -413,7 +491,7 @@ export function Live({ code, onAuthError }: { code: string; onAuthError: () => v
             {!state.players.length && <li className="muted">Nobody has joined yet</li>}
           </ol>
           <p className="muted small">
-            Shortcuts: <kbd>D</kbd> draw · <kbd>S</kbd> start question · <kbd>R</kbd> show answer · <kbd>L</kbd> leaderboard
+            Shortcuts: <kbd>D</kbd> {mode === 'random' ? 'draw' : 'type a ball'} · <kbd>S</kbd> start question · <kbd>R</kbd> show answer · <kbd>L</kbd> leaderboard
           </p>
           <p className="muted small">Answer colours: {ANSWER_STYLES.map((s) => s.name).join(', ')}</p>
         </section>

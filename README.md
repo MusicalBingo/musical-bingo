@@ -79,7 +79,9 @@ Each quiz has two download buttons:
 **Start game** gives you a 5-digit game code and opens the control panel.
 
 1. **Lobby**: players join with their name, then create a group for their table or tap a group that already exists. They can also play solo.
-2. **🎱 Draw number** (`D`): the big screen shows the ball. Players mark their paper cards. Using a real ball machine? Type the number in the bingo box instead.
+2. **Call a number**: the big screen shows the ball and players mark their paper cards. The bingo panel has two modes (the laptop remembers your choice):
+   - **🎱 Ball machine** (default): draw a real ball, type its number in the big box and press Enter, or click the number on the board. Typing a number anywhere on the page goes into the box. `B12` works too, and the app refuses a letter that doesn't match (`B40`), which catches misreads. **↶ Undo** takes back a typo.
+   - **🎲 Random**: **Draw number** (`D`) lets the app pick.
 3. **▶ Start question** (`S`): the music plays on the big screen, the picture starts uncovering, and phones show the answer buttons.
 4. **✔ Show answer** (`R`) happens automatically when time runs out or everyone has answered. The big screen shows the right answer, how many people chose each answer, and the **fastest** right answer.
 5. **🏆 Leaderboard** (`L`) whenever you like. Then draw the next number.
