@@ -64,6 +64,28 @@
   --tile-2: #36102a;
 }
 
+/* International Women's Day: the movement's purple, with green and a touch of mimosa yellow */
+:root[data-theme='womensday'] {
+  --bg: #1f0a2e;
+  --bg-2: #2e1245;
+  --glow: #7b2fa0;
+  --glow-2: #1d6b4a;
+  --muted: #e2cdf0;
+  --accent: #d98cff;
+  --accent-light: #f3dcff;
+  --accent-deep: #9b3fd1;
+  --accent-ink: #2a0040;
+  --accent-soft: rgba(217, 140, 255, 0.18);
+  --accent-line: rgba(217, 140, 255, 0.5);
+  --accent-shadow: rgba(217, 140, 255, 0.45);
+  --hero-1: #8e3fc9;
+  --hero-2: #3d1466;
+  --hero-3: #23875c;
+  --hero-glow: rgba(142, 63, 201, 0.5);
+  --tile-1: #4d2070;
+  --tile-2: #2e1245;
+}
+
 :root[data-theme='stpatrick'] {
   --bg: #05231a;
   --bg-2: #0b3527;

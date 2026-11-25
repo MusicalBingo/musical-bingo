@@ -50,6 +50,7 @@ Save with the button or **Ctrl+S**.
 | 🎄 Christmas | pine green with a red glow, gold balls, falling snow |
 | 🥂 New Year | midnight blue, champagne gold, falling confetti |
 | 💘 Valentine's Day | deep rose, pink balls, rising hearts |
+| 💐 Women's Day | violet with green, lilac balls, falling flowers |
 | 🍀 St Patrick's Day | Irish green, gold balls, falling shamrocks |
 | 🐰 Easter | lavender, falling tulips, chicks and eggs |
 | 🎃 Halloween | near-black and purple, pumpkin-orange balls, bats and ghosts |

@@ -2,7 +2,7 @@
 // this file has what the apps need to know: the name, the title emoji, and the falling / rising decorations.
 // The answer colours and shapes never change with the theme, so "the purple square" always means the same thing.
 
-export type ThemeId = 'classic' | 'christmas' | 'newyear' | 'valentine' | 'stpatrick' | 'easter' | 'halloween' | 'summer';
+export type ThemeId = 'classic' | 'christmas' | 'newyear' | 'valentine' | 'womensday' | 'stpatrick' | 'easter' | 'halloween' | 'summer';
 
 export interface ThemeDecor {
   /** fall from the top, rise from the bottom, or twinkle in place */
@@ -48,6 +48,13 @@ export const THEMES: Theme[] = [
     decor: { mode: 'rise', glyphs: ['❤', '♥', '❤'], colors: ['#ff4f81', '#ff8fb1', '#e0306f', '#ffc2d4'], size: [2, 4.6] },
   },
   {
+    id: 'womensday',
+    name: "Women's Day",
+    emoji: '💐',
+    barColor: '#1f0a2e',
+    decor: { mode: 'fall', glyphs: ['✿', '❀', '🌷', '✿', '❀', '💐'], colors: ['#e7b6ff', '#ffffff', '#ffd84d', '#ff9ecf'], size: [2, 4.4] },
+  },
+  {
     id: 'stpatrick',
     name: "St Patrick's Day",
     emoji: '🍀',
@@ -88,5 +95,6 @@ export function parseTheme(v: unknown): ThemeId {
   if (/nye|newyear|silvest/.test(s)) return 'newyear';
   if (/patrick|paddy|irish/.test(s)) return 'stpatrick';
   if (/valent|love/.test(s)) return 'valentine';
+  if (/women|woman|iwd|^march/.test(s)) return 'womensday';
   return 'classic';
 }
